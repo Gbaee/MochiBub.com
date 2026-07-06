@@ -2,9 +2,27 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { FaStar } from "react-icons/fa";
+import { HiOutlineSparkles } from "react-icons/hi";
+import fallbackImage from "../assets/mochi-hero.jpg";
+import { SectionTitle, Button } from "./ui";
+
+function SkeletonCard() {
+  return (
+    <div className="rounded-3xl overflow-hidden glass animate-pulse">
+      <div className="h-72 bg-beige-200" />
+      <div className="p-8 space-y-3">
+        <div className="h-5 bg-beige-200 rounded w-3/4 mx-auto" />
+        <div className="h-4 bg-beige-200 rounded w-1/2 mx-auto" />
+        <div className="h-8 bg-beige-200 rounded w-2/5 mx-auto mt-4" />
+      </div>
+    </div>
+  );
+}
 
 function BestSeller() {
   const [products, setProducts] = useState([]);
+  const [status, setStatus] = useState("loading"); // loading | success | error
 
   useEffect(() => {
     fetchBestSeller();
@@ -13,115 +31,121 @@ function BestSeller() {
   const fetchBestSeller = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/products/best-seller"
+        "http://localhost:5000/api/products/best-seller",
       );
-
       setProducts(response.data.slice(0, 3));
+      setStatus("success");
     } catch (error) {
       console.error(error);
+      setStatus("error");
     }
   };
 
   return (
-    <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-14"
-        >
-          <h2 className="text-4xl font-bold text-gray-800">
-            Favorit Pelanggan
-          </h2>
+    <section id="best-seller" className="py-24 md:py-32 bg-cream-50">
+      <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
+        <SectionTitle
+          eyebrow="Best Seller"
+          title="Premium Collection"
+          subtitle="Pilihan mochi paling diminati, dibuat fresh setiap hari dari bahan berkualitas premium."
+        />
 
-          <p className="text-gray-600 mt-4">
-            Produk pilihan yang paling diminati pelanggan.
-          </p>
-        </motion.div>
+        {status === "loading" && (
+          <div className="grid md:grid-cols-3 gap-8">
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        )}
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {products.map((item, index) => (
-            <motion.div
-              key={item.id}
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{
-                duration: 0.7,
-                delay: index * 0.2,
-              }}
-              whileHover={{
-                y: -12,
-                scale: 1.03,
-              }}
-              className="
-                bg-white
-                rounded-3xl
-                shadow-lg
-                overflow-hidden
-              "
-            >
-              <div className="h-72 overflow-hidden">
-                <img
-                  src={
-                    item.foto ||
-                    "https://placehold.co/600x400"
-                  }
-                  alt={item.nama_produk}
-                  className="
-                    w-full
-                    h-full
-                    object-cover
-                    hover:scale-110
-                    transition
-                    duration-500
-                  "
-                />
-              </div>
+        {status === "error" && (
+          <div className="text-center py-16 glass rounded-3xl">
+            <p className="text-charcoal-700/60">
+              Produk sedang tidak dapat dimuat. Silakan coba beberapa saat lagi.
+            </p>
+          </div>
+        )}
 
-              <div className="p-8 text-center">
-                <h3 className="text-2xl font-bold text-gray-800">
-                  {item.nama_produk}
-                </h3>
+        {status === "success" && products.length === 0 && (
+          <div className="text-center py-16 glass rounded-3xl">
+            <p className="text-charcoal-700/60">
+              Belum ada produk best seller saat ini.
+            </p>
+          </div>
+        )}
 
-                <div className="mt-3 text-yellow-500 text-xl">
-                  ⭐⭐⭐⭐⭐
+        {status === "success" && products.length > 0 && (
+          <div className="grid md:grid-cols-3 gap-8">
+            {products.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: index * 0.15 }}
+                whileHover={{ y: -10 }}
+                className="group relative rounded-3xl overflow-hidden bg-white shadow-[var(--shadow-soft)]"
+              >
+                {/* BADGE */}
+                <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 glass px-3 py-1.5 rounded-full text-[11px] font-semibold text-gold-600">
+                  <HiOutlineSparkles className="w-3.5 h-3.5" /> Chef's Choice
                 </div>
 
-                <p className="mt-3 text-gray-500">
-                  Produk terlaris berdasarkan pembelian pelanggan🔥
-                </p>
+                <div className="h-72 overflow-hidden">
+                  <img
+                    src={item.foto || fallbackImage}
+                    alt={item.nama_produk}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                </div>
 
-                <p className="mt-5 text-2xl font-bold text-pink-500">
-                  Rp{" "}
-                  {Number(item.harga).toLocaleString(
-                    "id-ID"
+                <div className="p-8 text-center">
+                  <h3 className="font-display text-2xl font-bold text-charcoal-900">
+                    {item.nama_produk}
+                  </h3>
+
+                  {/* Rating asli dari sistem review, bukan lagi placeholder */}
+                  {item.review_count > 0 && (
+                    <div className="mt-2 flex justify-center items-center gap-1 text-gold-500">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <FaStar
+                          key={i}
+                          className={
+                            i < Math.round(item.avg_rating)
+                              ? "opacity-100"
+                              : "opacity-25"
+                          }
+                        />
+                      ))}
+                      <span className="text-xs text-charcoal-700/50 ml-1">
+                        {Number(item.avg_rating).toFixed(1)} (
+                        {item.review_count})
+                      </span>
+                    </div>
                   )}
-                </p>
 
-                <Link
-                  to={`/product/${item.id}`}
-                  className="
-                    inline-block
-                    mt-6
-                    bg-pink-500
-                    hover:bg-pink-600
-                    text-white
-                    px-6
-                    py-3
-                    rounded-full
-                    font-semibold
-                    transition
-                  "
-                >
-                  Lihat Produk
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                  <p className="mt-3 text-sm text-charcoal-700/60">
+                    Produk terlaris berdasarkan pembelian pelanggan
+                  </p>
+
+                  <p className="mt-5 font-display text-2xl font-bold text-rose-500">
+                    Rp {Number(item.harga).toLocaleString("id-ID")}
+                  </p>
+
+                  <div className="mt-6">
+                    <Button
+                      to={`/product/${item.id}`}
+                      variant="primary"
+                      size="md"
+                    >
+                      Lihat Produk
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

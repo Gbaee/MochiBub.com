@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const upload = require(
-  "../middlewares/uploadMiddleware"
-);
+
+const upload = require("../middlewares/uploadMiddleware");
+const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
+
 const {
   getProducts,
   getProductById,
@@ -13,27 +15,16 @@ const {
   getBestSellerProducts,
 } = require("../controllers/productController");
 
-// Statistik Dashboard
-router.get("/stats/dashboard", getProductStats);
-
-// Best Seller
+// ===== PUBLIC — semua orang boleh lihat produk (perlu untuk toko online) =====
 router.get("/best-seller", getBestSellerProducts);
-
-// Produk
 router.get("/", getProducts);
 router.get("/:id", getProductById);
 
-// CRUD
-router.post(
-  "/",
-  upload.single("foto"),
-  createProduct
-);
-router.put(
-  "/:id",
-  upload.single("foto"),
-  updateProduct
-);
-router.delete("/:id", deleteProduct);
+// ===== ADMIN ONLY =====
+router.get("/stats/dashboard", authMiddleware, authorizeRoles("admin"), getProductStats);
+
+router.post("/", authMiddleware, authorizeRoles("admin"), upload.uploadSingle("foto"), createProduct);
+router.put("/:id", authMiddleware, authorizeRoles("admin"), upload.uploadSingle("foto"), updateProduct);
+router.delete("/:id", authMiddleware, authorizeRoles("admin"), deleteProduct);
 
 module.exports = router;

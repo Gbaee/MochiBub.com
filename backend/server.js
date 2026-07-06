@@ -32,6 +32,11 @@ app.use(
   require("./routes/adminRoutes")
 );
 
+app.use(
+  "/api/reviews",
+  require("./routes/reviewRoutes")
+);
+
 app.listen(process.env.PORT, () => {
   console.log(
     `Server berjalan di port ${process.env.PORT}`

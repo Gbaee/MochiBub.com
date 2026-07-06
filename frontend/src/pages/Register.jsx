@@ -387,12 +387,9 @@ function Register() {
               </div>
             </div>
 
+            <div>
             <div className="relative">
               <FaLock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
-
-              <div className="relative">
-                <FaLock className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
-
                 <input
                   type="password"
                   name="register_password"
@@ -421,6 +418,9 @@ function Register() {
     "
                 />
               </div>
+                <p className="text-xs text-gray-400 mt-2 ml-1">
+                Minimal 8 karakter, kombinasi huruf dan angka
+              </p>
             </div>
 
             <button

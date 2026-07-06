@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
 import ProductReviews from "../components/ProductReviews";
 
 function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const { addToCart } = useCart();
 
@@ -13,6 +14,7 @@ function ProductDetail() {
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState("");
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,14 +22,12 @@ function ProductDetail() {
         const productResponse = await axios.get(
           `http://localhost:5000/api/products/${id}`,
         );
-
         setProduct(productResponse.data);
         setSelectedImage(productResponse.data.foto);
 
         const productsResponse = await axios.get(
           "http://localhost:5000/api/products",
         );
-
         setProducts(productsResponse.data);
       } catch (error) {
         console.error(error);
@@ -37,6 +37,14 @@ function ProductDetail() {
     fetchData();
   }, [id]);
 
+  // cek favorite dari localStorage saat produk berubah
+  useEffect(() => {
+    if (!product) return;
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    setIsFavorite(favorites.some((f) => f.id === product.id));
+  }, [product]);
+
+  // quantity dibatasi maksimal sesuai stok produk
   const increaseQty = () => {
     if (product && quantity < product.stok) {
       setQuantity((prev) => prev + 1);
@@ -51,12 +59,54 @@ function ProductDetail() {
 
   const handleAddToCart = () => {
     if (!product) return;
-
     addToCart(product, quantity);
-
     alert(
       `${quantity} ${product.nama_produk} berhasil ditambahkan ke keranjang`,
     );
+  };
+
+  // Beli Sekarang: masukkan ke cart lalu langsung ke checkout
+  const handleBuyNow = () => {
+    if (!product) return;
+    addToCart(product, quantity);
+    navigate("/checkout");
+  };
+
+  // Toggle Favorite — simpan ke localStorage
+  const handleToggleFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if (isFavorite) {
+      const updated = favorites.filter((f) => f.id !== product.id);
+      localStorage.setItem("favorites", JSON.stringify(updated));
+      setIsFavorite(false);
+      alert(`${product.nama_produk} dihapus dari favorit`);
+    } else {
+      favorites.push(product);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      setIsFavorite(true);
+      alert(`${product.nama_produk} ditambahkan ke favorit ❤️`);
+    }
+  };
+
+  // Bagikan — gunakan Web Share API, fallback ke copy clipboard
+  const handleShare = async () => {
+    const shareData = {
+      title: product.nama_produk,
+      text: `Lihat produk ini: ${product.nama_produk} — Rp ${Number(product.harga).toLocaleString("id-ID")}`,
+      url: window.location.href,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // user cancel share — abaikan
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert("Link produk berhasil disalin ke clipboard 📋");
+    }
   };
 
   if (!product) {
@@ -70,92 +120,36 @@ function ProductDetail() {
   return (
     <div className="max-w-6xl mx-auto px-5 py-10">
       {/* DETAIL PRODUK */}
-      <div
-        className="
-        bg-white
-        rounded-3xl
-        shadow-xl
-        overflow-hidden
-        grid
-        md:grid-cols-2
-        "
-      >
+      <div className="bg-white rounded-3xl shadow-xl overflow-hidden grid md:grid-cols-2">
+        {/* Gambar */}
         <div className="p-6">
           <img
             src={selectedImage || "https://placehold.co/800x600"}
             alt={product.nama_produk}
-            className="
-    w-full
-    h-[500px]
-    object-cover
-    rounded-3xl
-    transition
-    hover:scale-105
-    duration-300
-    "
+            className="w-full h-[500px] object-cover rounded-3xl transition hover:scale-105 duration-300"
           />
-
-          <div className="flex gap-3 mt-4">
-            {[1, 2, 3].map((item) => (
-              <img
-                key={item}
-                src={product.foto || "https://placehold.co/600x400"}
-                alt="thumbnail"
-                onClick={() => setSelectedImage(product.foto)}
-                className="
-        w-24
-        h-24
-        object-cover
-        rounded-xl
-        border-2
-        border-pink-200
-        cursor-pointer
-        hover:border-pink-500
-        "
-              />
-            ))}
-          </div>
         </div>
 
+        {/* Info Produk */}
         <div className="p-10">
           <h1 className="text-4xl font-bold text-gray-800">
             {product.nama_produk}
           </h1>
-
-          <div className="mt-4 text-yellow-500 text-xl">⭐⭐⭐⭐⭐</div>
 
           <h2 className="text-3xl font-bold text-pink-500 mt-5">
             Rp {Number(product.harga).toLocaleString("id-ID")}
           </h2>
 
           <div className="flex gap-3 mt-4">
-            <span
-              className="
-    bg-green-100
-    text-green-600
-    px-3
-    py-1
-    rounded-full
-    text-sm
-    font-semibold
-    "
-            >
-              ✅ Ready Stock
-            </span>
-
-            <span
-              className="
-    bg-yellow-100
-    text-yellow-700
-    px-3
-    py-1
-    rounded-full
-    text-sm
-    font-semibold
-    "
-            >
-              ⭐ Best Seller
-            </span>
+            {product.stok > 0 ? (
+              <span className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-semibold">
+                Ready Stock
+              </span>
+            ) : (
+              <span className="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-semibold">
+                Stok Habis
+              </span>
+            )}
           </div>
 
           <p className="mt-6 text-gray-600 leading-relaxed">
@@ -167,24 +161,12 @@ function ProductDetail() {
             {product.stok}
           </div>
 
-          <div
-            className="
-  mt-5
-  bg-gray-50
-  rounded-2xl
-  p-5
-  space-y-3
-  "
-          >
+          <div className="mt-5 bg-gray-50 rounded-2xl p-5 space-y-3">
             <div>
-              🚚 Estimasi tiba:
-              <strong> 1 - 2 Hari</strong>
+              🚚 Estimasi tiba: <strong>1 - 2 Hari</strong>
             </div>
-
             <div>✅ Produk dibuat fresh setiap hari</div>
-
             <div>🔒 Pembayaran aman & terpercaya</div>
-
             <div>🎁 Kemasan premium dan higienis</div>
           </div>
 
@@ -192,121 +174,79 @@ function ProductDetail() {
           <div className="mt-6">
             <p className="font-semibold mb-3">Jumlah Pesanan</p>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
               <button
                 onClick={decreaseQty}
-                className="
-                w-12
-                h-12
-                rounded-full
-                bg-pink-100
-                text-xl
-                font-bold
-                hover:bg-pink-200
-                "
+                disabled={quantity <= 1}
+                className="w-9 h-9 rounded-full border border-pink-300 text-pink-500 font-bold text-lg hover:bg-pink-50 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center"
               >
-                -
+                −
               </button>
 
-              <span className="text-2xl font-bold">{quantity}</span>
+              <span className="w-10 text-center text-lg font-bold text-gray-800">
+                {quantity}
+              </span>
 
               <button
                 onClick={increaseQty}
-                className="
-                w-12
-                h-12
-                rounded-full
-                bg-pink-100
-                text-xl
-                font-bold
-                hover:bg-pink-200
-                "
+                disabled={product && quantity >= product.stok}
+                className="w-9 h-9 rounded-full bg-pink-500 text-white font-bold text-lg hover:bg-pink-600 disabled:opacity-40 disabled:cursor-not-allowed transition flex items-center justify-center"
               >
                 +
               </button>
             </div>
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            className="
-            mt-8
-            bg-pink-500
-            hover:bg-pink-600
-            text-white
-            px-8
-            py-4
-            rounded-2xl
-            font-semibold
-            transition
-            "
-          >
-            🛒 Tambah ke Keranjang
-          </button>
+          {/* CTA BUTTONS sejajar horizontal */}
+          <div className="mt-8 flex gap-3">
+            <button
+              onClick={handleBuyNow}
+              className="flex-1 bg-gradient-to-r from-pink-500 to-fuchsia-500 hover:from-pink-600 hover:to-fuchsia-600 text-white px-4 py-3 rounded-2xl font-bold transition-all hover:scale-[1.02] shadow-md shadow-pink-200"
+            >
+              ⚡ Beli Sekarang
+            </button>
+
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 border-2 border-pink-500 text-pink-500 px-4 py-3 rounded-2xl font-semibold hover:bg-pink-50 transition"
+            >
+              🛒 Keranjang
+            </button>
+          </div>
         </div>
       </div>
 
+      {/* TOMBOL FAVORIT & BAGIKAN */}
       <div className="flex gap-3 mt-4">
-  <button
-    className="
-    flex-1
-    border
-    border-pink-500
-    text-pink-500
-    py-4
-    rounded-2xl
-    font-semibold
-    hover:bg-pink-50
-    transition
-    "
-  >
-    ❤️ Favorit
-  </button>
+        <button
+          onClick={handleToggleFavorite}
+          className={`flex-1 border-2 py-4 rounded-2xl font-semibold transition ${
+            isFavorite
+              ? "border-pink-500 bg-pink-500 text-white"
+              : "border-pink-500 text-pink-500 hover:bg-pink-50"
+          }`}
+        >
+          {isFavorite ? "❤️ Tersimpan di Favorit" : "🤍 Favorit"}
+        </button>
 
-  <button
-    className="
-    flex-1
-    border
-    border-gray-300
-    py-4
-    rounded-2xl
-    font-semibold
-    hover:bg-gray-50
-    transition
-    "
-  >
-    📤 Bagikan
-  </button>
-</div>
+        <button
+          onClick={handleShare}
+          className="flex-1 border-2 border-gray-300 py-4 rounded-2xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition"
+        >
+          📤 Bagikan
+        </button>
+      </div>
 
-      <ProductReviews />
+      <ProductReviews productId={product.id} />
 
       {/* REKOMENDASI */}
       <div className="mt-24">
         <div className="text-center mb-12">
-          <span
-            className="
-            bg-pink-100
-            text-pink-600
-            px-4
-            py-2
-            rounded-full
-            text-sm
-            font-semibold
-            "
-          >
+          <span className="bg-pink-100 text-pink-600 px-4 py-2 rounded-full text-sm font-semibold">
             REKOMENDASI UNTUKMU
           </span>
 
-          <h2
-            className="
-            text-4xl
-            font-bold
-            mt-4
-            "
-          >
-            🍡 Mungkin Kamu Suka Ini
-          </h2>
+          <h2 className="text-4xl font-bold mt-4">🍡 Mungkin Kamu Suka Ini</h2>
 
           <p className="text-gray-500 mt-3">
             Pilihan mochi favorit lainnya yang cocok untukmu.
@@ -314,109 +254,48 @@ function ProductDetail() {
         </div>
 
         {relatedProducts.length > 0 ? (
-          <div
-            className="
-            grid
-            md:grid-cols-3
-            gap-8
-            "
-          >
+          <div className="grid md:grid-cols-3 gap-8">
             {relatedProducts.map((item) => (
-              <Link key={item.id} to={`/product/${item.id}`}>
-                <div
-                  className="
-                  bg-white
-                  rounded-3xl
-                  shadow-lg
-                  overflow-hidden
-                  hover:-translate-y-3
-                  hover:shadow-2xl
-                  transition-all
-                  duration-300
-                  "
-                >
-                  <div className="relative">
-                    <img
-                      src={item.foto || "https://placehold.co/600x400"}
-                      alt={item.nama_produk}
-                      className="
-                      h-56
-                      w-full
-                      object-cover
-                      "
-                    />
-
-                    <span
-                      className="
-                      absolute
-                      top-4
-                      left-4
-                      bg-pink-500
-                      text-white
-                      text-xs
-                      px-3
-                      py-1
-                      rounded-full
-                      "
-                    >
-                      Rekomendasi
-                    </span>
-                  </div>
-
-                  <div className="p-5">
-                    <h3
-                      className="
-                      font-bold
-                      text-xl
-                      mb-2
-                      "
-                    >
-                      {item.nama_produk}
-                    </h3>
-
-                    <p
-                      className="
-                      text-pink-500
-                      font-bold
-                      text-lg
-                      "
-                    >
-                      Rp {Number(item.harga).toLocaleString("id-ID")}
-                    </p>
-
-                    <button
-                      className="
-                      mt-4
-                      w-full
-                      bg-pink-500
-                      text-white
-                      py-3
-                      rounded-xl
-                      hover:bg-pink-600
-                      transition
-                      "
-                    >
-                      Lihat Produk
-                    </button>
-                  </div>
+              /* Fix: pakai div onClick + navigate agar klik card & button keduanya berfungsi */
+              <div
+                key={item.id}
+                onClick={() => navigate(`/product/${item.id}`)}
+                className="cursor-pointer bg-white rounded-3xl shadow-lg overflow-hidden hover:-translate-y-3 hover:shadow-2xl transition-all duration-300"
+              >
+                <div className="relative">
+                  <img
+                    src={item.foto || "https://placehold.co/600x400"}
+                    alt={item.nama_produk}
+                    className="h-56 w-full object-cover"
+                  />
+                  <span className="absolute top-4 left-4 bg-pink-500 text-white text-xs px-3 py-1 rounded-full">
+                    Rekomendasi
+                  </span>
                 </div>
-              </Link>
+
+                <div className="p-5">
+                  <h3 className="font-bold text-xl mb-2">{item.nama_produk}</h3>
+                  <p className="text-pink-500 font-bold text-lg">
+                    Rp {Number(item.harga).toLocaleString("id-ID")}
+                  </p>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/${item.id}`);
+                    }}
+                    className="mt-4 w-full bg-pink-500 text-white py-3 rounded-xl hover:bg-pink-600 transition"
+                  >
+                    Lihat Produk
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         ) : (
-          <div
-            className="
-            bg-white
-            rounded-3xl
-            p-10
-            text-center
-            shadow-lg
-            "
-          >
+          <div className="bg-white rounded-3xl p-10 text-center shadow-lg">
             <h3 className="text-xl font-semibold">
               Belum ada rekomendasi produk
             </h3>
-
             <p className="text-gray-500 mt-2">
               Produk lainnya akan muncul di sini.
             </p>

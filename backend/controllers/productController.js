@@ -144,21 +144,25 @@ exports.getBestSellerProducts = (req, res) => {
     `
     SELECT
       p.*,
-      COALESCE(SUM(oi.qty),0) AS total_sold
+      COALESCE(
+        (SELECT SUM(oi.qty) FROM order_items oi WHERE oi.product_id = p.id),
+        0
+      ) AS total_sold,
+      COALESCE(
+        (SELECT AVG(r.rating) FROM reviews r WHERE r.product_id = p.id),
+        0
+      ) AS avg_rating,
+      (
+        SELECT COUNT(*) FROM reviews r WHERE r.product_id = p.id
+      ) AS review_count
     FROM products p
-    LEFT JOIN order_items oi
-      ON p.id = oi.product_id
-    GROUP BY p.id
     ORDER BY total_sold DESC
     LIMIT 3
     `,
     (err, results) => {
       if (err) {
-        return res.status(500).json({
-          message: err.message,
-        });
+        return res.status(500).json({ message: err.message });
       }
-
       res.json(results);
     },
   );

@@ -2,10 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const authMiddleware = require("../middleware/authMiddleware");
-
-const paymentUpload = require(
-  "../middlewares/paymentUploadMiddleware"
-);
+const authorizeRoles = require("../middleware/roleMiddleware");
+const paymentUpload = require("../middlewares/paymentUploadMiddleware");
 
 const {
   createOrder,
@@ -17,54 +15,30 @@ const {
   verifyPayment,
 } = require("../controllers/orderController");
 
-// CUSTOMER CHECKOUT
-router.post(
-  "/",
-  authMiddleware,
-  createOrder
-);
+// CUSTOMER — checkout
+router.post("/", authMiddleware, createOrder);
 
-// ADMIN
-router.get(
-  "/",
-  authMiddleware,
-  getOrders
-);
+// CUSTOMER — lihat pesanan sendiri
+router.get("/my-orders", authMiddleware, getMyOrders);
 
-// MY ORDERS
-router.get(
-  "/my-orders",
-  authMiddleware,
-  getMyOrders
-);
-
-// DETAIL ORDER
-router.get(
-  "/:id",
-  authMiddleware,
-  getOrderDetail
-);
-
-// UPLOAD BUKTI PEMBAYARAN
+// CUSTOMER — upload bukti bayar untuk pesanan sendiri
 router.post(
   "/:id/upload-payment",
   authMiddleware,
-  paymentUpload.single("payment"),
-  uploadPaymentProof
+  paymentUpload.uploadSingle("payment"),
+  uploadPaymentProof,
 );
 
-// UPDATE STATUS
-router.put(
-  "/:id/status",
-  authMiddleware,
-  updateOrderStatus
-);
+// ADMIN ONLY — lihat semua pesanan
+router.get("/", authMiddleware, authorizeRoles("admin"), getOrders);
 
-// VERIFY PAYMENT
-router.put(
-  "/:id/verify-payment",
-  authMiddleware,
-  verifyPayment
-);
+// ADMIN ONLY — ubah status pesanan
+router.put("/:id/status", authMiddleware, authorizeRoles("admin"), updateOrderStatus);
+
+// ADMIN ONLY — verifikasi pembayaran
+router.put("/:id/verify-payment", authMiddleware, authorizeRoles("admin"), verifyPayment);
+
+// Detail 1 pesanan (taruh paling bawah karena pola ":id" generik)
+router.get("/:id", authMiddleware, getOrderDetail);
 
 module.exports = router;

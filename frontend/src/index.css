@@ -1,4 +1,71 @@
 @import "tailwindcss";
+
+@theme {
+  /* ===== COLOR TOKENS ===== */
+  --color-rose-50: #fff5f8;
+  --color-rose-100: #ffe4ec;
+  --color-rose-200: #ffc2d6;
+  --color-rose-300: #ff8fb3;
+  --color-rose-400: #f8619a;
+  --color-rose-500: #e91e8c;
+  --color-rose-600: #d0157a;
+  --color-rose-700: #a80f63;
+
+  --color-gold-300: #e8cd9c;
+  --color-gold-400: #d4af7a;
+  --color-gold-500: #c9a15f;
+  --color-gold-600: #a8813f;
+
+  --color-cream-50: #fffaf6;
+  --color-cream-100: #fff5ed;
+  --color-cream-200: #fbe9db;
+
+  --color-beige-100: #f5ede4;
+  --color-beige-200: #ece0d1;
+  --color-beige-300: #ddc9ae;
+
+  --color-charcoal-700: #3a322c;
+  --color-charcoal-800: #241d19;
+  --color-charcoal-900: #16110f;
+
+  /* ===== FONT TOKENS ===== */
+  --font-display: "Fraunces", "Georgia", serif;
+  --font-sans: "Plus Jakarta Sans", "Inter", system-ui, sans-serif;
+
+  /* ===== SHADOW TOKENS ===== */
+  --shadow-glow-rose: 0 20px 50px -12px rgba(233, 30, 140, 0.35);
+  --shadow-glow-gold: 0 20px 50px -12px rgba(201, 161, 95, 0.35);
+  --shadow-soft: 0 10px 30px rgba(20, 15, 12, 0.08);
+
+  /* ===== RADIUS TOKENS ===== */
+  --radius-3xl: 1.75rem;
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-cream-50);
+  color: var(--color-charcoal-800);
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+/* ===== REUSABLE UTILITIES (glassmorphism) ===== */
+@utility glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+@utility glass-dark {
+  background: rgba(22, 17, 15, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }

@@ -55,7 +55,7 @@ function MyOrders() {
 
       console.log("DATA:", error.response?.data);
 
-      toast.error("Gagal mengambil data pesanan");
+      toast.error(error.response?.data?.message || "Gagal mengambil data pesanan. Cek koneksi ke server.");
     } finally {
       setLoading(false);
     }
