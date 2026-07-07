@@ -37,10 +37,13 @@ function Testimonials() {
   };
 
   return (
-    <section className="relative py-24 md:py-32 bg-cream-50 overflow-hidden">
+    <section className="relative py-24 md:py-32 bg-cream-50 dark:bg-charcoal-900 overflow-hidden">
       <div
         className="absolute bottom-0 left-1/4 w-[450px] h-[450px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(201,161,95,0.08) 0%, transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, rgba(201,161,95,0.08) 0%, transparent 70%)",
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 relative z-10">
@@ -60,7 +63,9 @@ function Testimonials() {
 
         {status === "error" && (
           <div className="text-center py-16 glass rounded-3xl">
-            <p className="text-charcoal-700/60">Ulasan sedang tidak dapat dimuat.</p>
+            <p className="text-charcoal-700/60">
+              Ulasan sedang tidak dapat dimuat.
+            </p>
           </div>
         )}
 
@@ -86,7 +91,7 @@ function Testimonials() {
                 <GlassCard className="h-full relative" hover>
                   <FaQuoteLeft className="w-8 h-8 text-rose-200 mb-4" />
 
-                  <p className="text-charcoal-800 italic leading-relaxed mb-6">
+                  <p className="text-charcoal-800 dark:text-cream-100 italic leading-relaxed mb-6">
                     "{item.comment}"
                   </p>
 
@@ -95,14 +100,16 @@ function Testimonials() {
                       {item.reviewer_name?.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-charcoal-900 text-sm">
+                      <h3 className="font-semibold text-charcoal-900 dark:text-cream-50 text-sm">
                         {item.reviewer_name}
                       </h3>
                       <div className="flex gap-0.5 text-gold-500 text-xs mt-0.5">
                         {Array.from({ length: 5 }).map((_, i) => (
                           <FaStar
                             key={i}
-                            className={i < item.rating ? "opacity-100" : "opacity-25"}
+                            className={
+                              i < item.rating ? "opacity-100" : "opacity-25"
+                            }
                           />
                         ))}
                       </div>

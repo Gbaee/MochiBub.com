@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 const VARIANTS = {
   primary: "bg-gradient-to-r from-rose-600 to-rose-400 text-white shadow-[var(--shadow-glow-rose)]",
   gold: "bg-gradient-to-r from-gold-500 to-gold-400 text-charcoal-900 shadow-[var(--shadow-glow-gold)]",
-  outline: "glass text-charcoal-800 border border-rose-200",
+  outline: "glass text-charcoal-800 dark:text-cream-50 border border-rose-200 dark:border-white/10",
   dark: "bg-charcoal-900 text-cream-50",
 };
 

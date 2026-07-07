@@ -24,7 +24,6 @@ function Checkout() {
   const userData = localStorage.getItem("user");
   const user = userData ? JSON.parse(userData) : null;
 
-  // ✅ Fix: gunakan `user` yang sudah di-parse di atas, tidak perlu parse ulang
   const [customerName, setCustomerName] = useState(user?.nama || user?.name || "");
   const [whatsapp, setWhatsapp] = useState(user?.nomor_wa || "");
   const [address, setAddress] = useState(user?.alamat || "");
@@ -38,7 +37,6 @@ function Checkout() {
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ Fix: tambah `navigate` ke dependency array
   useEffect(() => {
     if (!user) {
       toast.error("Silakan login terlebih dahulu");
@@ -124,10 +122,8 @@ function Checkout() {
         "_blank"
       );
 
-      // ✅ Fix: toast.success hanya dipanggil sekali
       toast.success("Pesanan berhasil dibuat 🎉");
 
-      // ✅ Fix: setLoading(false) hanya di sini, tidak duplikat
       setTimeout(() => {
         clearCart();
         navigate("/order-success");
@@ -136,13 +132,12 @@ function Checkout() {
       console.error(error);
       toast.error(error.response?.data?.message || "Gagal membuat pesanan");
     } finally {
-      // ✅ Fix: gunakan finally agar setLoading selalu terpanggil
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
+    <div className="min-h-screen bg-white dark:bg-charcoal-900 relative overflow-hidden">
       {/* Background Blur */}
       <div className="absolute top-0 left-0 w-[450px] h-[450px] bg-pink-200/50 rounded-full blur-[170px]" />
       <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-fuchsia-200/40 rounded-full blur-[170px]" />
@@ -157,16 +152,16 @@ function Checkout() {
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-pink-50 border border-pink-200 text-pink-600 font-semibold">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-pink-50 dark:bg-white/10 border border-pink-200 dark:border-white/10 text-pink-600 dark:text-rose-300 font-semibold">
             <FaShoppingBag />
             Checkout Premium
           </div>
 
-          <h1 className="text-6xl font-black text-gray-900 mt-6 tracking-tight">
+          <h1 className="text-6xl font-black text-gray-900 dark:text-cream-50 mt-6 tracking-tight">
             Selesaikan Pesananmu
           </h1>
 
-          <p className="mt-5 text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-5 text-lg text-gray-500 dark:text-cream-100/50 max-w-2xl mx-auto leading-relaxed">
             Satu langkah lagi menuju Mochi Bub favoritmu.
             Pastikan seluruh informasi sudah benar sebelum membuat pesanan.
           </p>
@@ -179,25 +174,25 @@ function Checkout() {
           transition={{ delay: 0.2 }}
           className="flex justify-center items-center mb-14"
         >
-          <div className="bg-white/70 backdrop-blur-xl border border-pink-100 rounded-full shadow-xl px-8 py-5 flex items-center gap-8">
+          <div className="bg-white/70 dark:bg-charcoal-800/70 backdrop-blur-xl border border-pink-100 dark:border-white/10 rounded-full shadow-xl px-8 py-5 flex items-center gap-8">
             {steps.map((step, index) => (
               <div key={index} className="flex items-center gap-5">
                 <div
                   className={`w-12 h-12 rounded-full flex items-center justify-center font-bold ${
                     step.active
                       ? "bg-gradient-to-r from-pink-500 to-fuchsia-500 text-white"
-                      : "bg-gray-100 text-gray-400"
+                      : "bg-gray-100 dark:bg-white/10 text-gray-400 dark:text-cream-100/40"
                   }`}
                 >
                   {step.active ? <FaCheckCircle /> : index + 1}
                 </div>
 
-                <span className={`font-semibold ${step.active ? "text-gray-900" : "text-gray-400"}`}>
+                <span className={`font-semibold ${step.active ? "text-gray-900 dark:text-cream-50" : "text-gray-400 dark:text-cream-100/40"}`}>
                   {step.title}
                 </span>
 
                 {index !== steps.length - 1 && (
-                  <div className="w-16 h-[2px] bg-pink-200" />
+                  <div className="w-16 h-[2px] bg-pink-200 dark:bg-white/10" />
                 )}
               </div>
             ))}
@@ -211,7 +206,7 @@ function Checkout() {
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="relative rounded-[36px] border border-pink-100 bg-white/80 backdrop-blur-2xl shadow-[0_30px_80px_rgba(236,72,153,.12)] overflow-hidden"
+            className="relative rounded-[36px] border border-pink-100 dark:border-white/10 bg-white/80 dark:bg-charcoal-800/80 backdrop-blur-2xl shadow-[0_30px_80px_rgba(236,72,153,.12)] overflow-hidden"
           >
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500" />
 
@@ -221,14 +216,14 @@ function Checkout() {
                   <FaTruck />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-black text-gray-900">Data Pengiriman</h2>
-                  <p className="text-gray-500 mt-1">Lengkapi data agar pesanan dapat diproses.</p>
+                  <h2 className="text-3xl font-black text-gray-900 dark:text-cream-50">Data Pengiriman</h2>
+                  <p className="text-gray-500 dark:text-cream-100/50 mt-1">Lengkapi data agar pesanan dapat diproses.</p>
                 </div>
               </div>
 
               {/* Nama */}
               <div className="mb-5">
-                <label className="font-semibold text-gray-700 mb-2 block">
+                <label className="font-semibold text-gray-700 dark:text-cream-100/80 mb-2 block">
                   <FaUser className="inline mr-2 text-pink-500" />
                   Nama Lengkap
                 </label>
@@ -237,13 +232,13 @@ function Checkout() {
                   placeholder="Masukkan nama lengkap"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-5 py-4 focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-charcoal-900 dark:text-cream-50 border border-slate-200 dark:border-white/10 px-5 py-4 focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 dark:focus:ring-white/10 transition"
                 />
               </div>
 
               {/* WA */}
               <div className="mb-5">
-                <label className="font-semibold text-gray-700 mb-2 block">
+                <label className="font-semibold text-gray-700 dark:text-cream-100/80 mb-2 block">
                   <FaPhoneAlt className="inline mr-2 text-pink-500" />
                   Nomor WhatsApp
                 </label>
@@ -252,13 +247,13 @@ function Checkout() {
                   placeholder="08xxxxxxxxxx"
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
-                  className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-5 py-4 focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-charcoal-900 dark:text-cream-50 border border-slate-200 dark:border-white/10 px-5 py-4 focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 dark:focus:ring-white/10 transition"
                 />
               </div>
 
               {/* Alamat */}
               <div className="mb-5">
-                <label className="font-semibold text-gray-700 mb-2 block">
+                <label className="font-semibold text-gray-700 dark:text-cream-100/80 mb-2 block">
                   <FaMapMarkerAlt className="inline mr-2 text-pink-500" />
                   Alamat Lengkap
                 </label>
@@ -267,13 +262,13 @@ function Checkout() {
                   placeholder="Masukkan alamat lengkap"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-5 py-4 resize-none focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-charcoal-900 dark:text-cream-50 border border-slate-200 dark:border-white/10 px-5 py-4 resize-none focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 dark:focus:ring-white/10 transition"
                 />
               </div>
 
               {/* Catatan */}
               <div className="mb-5">
-                <label className="font-semibold text-gray-700 mb-2 block">
+                <label className="font-semibold text-gray-700 dark:text-cream-100/80 mb-2 block">
                   <FaStickyNote className="inline mr-2 text-pink-500" />
                   Catatan
                 </label>
@@ -282,13 +277,13 @@ function Checkout() {
                   placeholder="Contoh: Jangan terlalu manis"
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
-                  className="w-full rounded-2xl bg-slate-50 border border-slate-200 px-5 py-4 resize-none focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 transition"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-charcoal-900 dark:text-cream-50 border border-slate-200 dark:border-white/10 px-5 py-4 resize-none focus:outline-none hover:border-pink-300 focus:border-pink-500 focus:ring-4 focus:ring-pink-100 dark:focus:ring-white/10 transition"
                 />
               </div>
 
               {/* Payment */}
               <div>
-                <label className="font-semibold text-gray-700 mb-2 block">
+                <label className="font-semibold text-gray-700 dark:text-cream-100/80 mb-2 block">
                   <FaCreditCard className="inline mr-2 text-pink-500" />
                   Metode Pembayaran
                 </label>
@@ -299,13 +294,13 @@ function Checkout() {
                     onClick={() => setPaymentMethod("COD")}
                     className={`rounded-3xl border-2 p-5 transition-all duration-300 ${
                       paymentMethod === "COD"
-                        ? "border-pink-500 bg-pink-50 shadow-lg shadow-pink-200"
-                        : "border-slate-200 hover:border-pink-300"
+                        ? "border-pink-500 bg-pink-50 dark:bg-white/10 shadow-lg shadow-pink-200 dark:shadow-none"
+                        : "border-slate-200 dark:border-white/10 hover:border-pink-300"
                     }`}
                   >
                     <div className="text-3xl mb-2">🚚</div>
-                    <h3 className="font-bold">COD</h3>
-                    <p className="text-sm text-gray-500 mt-1">Bayar saat barang diterima</p>
+                    <h3 className="font-bold text-gray-900 dark:text-cream-50">COD</h3>
+                    <p className="text-sm text-gray-500 dark:text-cream-100/50 mt-1">Bayar saat barang diterima</p>
                   </button>
 
                   <button
@@ -313,13 +308,13 @@ function Checkout() {
                     onClick={() => setPaymentMethod("Transfer")}
                     className={`rounded-3xl border-2 p-5 transition-all duration-300 ${
                       paymentMethod === "Transfer"
-                        ? "border-pink-500 bg-pink-50 shadow-lg shadow-pink-200"
-                        : "border-slate-200 hover:border-pink-300"
+                        ? "border-pink-500 bg-pink-50 dark:bg-white/10 shadow-lg shadow-pink-200 dark:shadow-none"
+                        : "border-slate-200 dark:border-white/10 hover:border-pink-300"
                     }`}
                   >
                     <div className="text-3xl mb-2">🏦</div>
-                    <h3 className="font-bold">Transfer</h3>
-                    <p className="text-sm text-gray-500 mt-1">Transfer sebelum pengiriman</p>
+                    <h3 className="font-bold text-gray-900 dark:text-cream-50">Transfer</h3>
+                    <p className="text-sm text-gray-500 dark:text-cream-100/50 mt-1">Transfer sebelum pengiriman</p>
                   </button>
                 </div>
               </div>
@@ -331,7 +326,7 @@ function Checkout() {
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
-            className="sticky top-24 overflow-hidden rounded-[36px] border border-pink-100 bg-white/80 backdrop-blur-2xl shadow-[0_30px_80px_rgba(236,72,153,.12)]"
+            className="sticky top-24 overflow-hidden rounded-[36px] border border-pink-100 dark:border-white/10 bg-white/80 dark:bg-charcoal-800/80 backdrop-blur-2xl shadow-[0_30px_80px_rgba(236,72,153,.12)]"
           >
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-500" />
 
@@ -341,8 +336,8 @@ function Checkout() {
                   <FaShoppingBag />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-black">Ringkasan Pesanan</h2>
-                  <p className="text-gray-500">Periksa kembali pesananmu</p>
+                  <h2 className="text-3xl font-black text-gray-900 dark:text-cream-50">Ringkasan Pesanan</h2>
+                  <p className="text-gray-500 dark:text-cream-100/50">Periksa kembali pesananmu</p>
                 </div>
               </div>
 
@@ -354,11 +349,11 @@ function Checkout() {
                     layout
                     whileHover={{ scale: 1.02 }}
                     transition={{ duration: 0.2 }}
-                    className="rounded-2xl bg-slate-50 border border-slate-200 p-5 flex justify-between items-center"
+                    className="rounded-2xl bg-slate-50 dark:bg-charcoal-900 border border-slate-200 dark:border-white/10 p-5 flex justify-between items-center"
                   >
                     <div>
-                      <h3 className="font-bold">{item.nama_produk}</h3>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <h3 className="font-bold text-gray-900 dark:text-cream-50">{item.nama_produk}</h3>
+                      <p className="text-sm text-gray-500 dark:text-cream-100/50 mt-1">
                         {item.qty} x Rp {Number(item.harga).toLocaleString("id-ID")}
                       </p>
                     </div>
@@ -371,17 +366,16 @@ function Checkout() {
 
               {/* ====================== VOUCHER ====================== */}
               <div className="mt-8">
-                <div className="rounded-3xl bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-100 p-5">
-                  <h3 className="font-bold mb-3">🎁 Voucher Diskon</h3>
+                <div className="rounded-3xl bg-gradient-to-r from-pink-50 to-purple-50 dark:from-white/10 dark:to-white/5 border border-pink-100 dark:border-white/10 p-5">
+                  <h3 className="font-bold mb-3 text-gray-900 dark:text-cream-50">🎁 Voucher Diskon</h3>
 
-                  {/* ✅ Fix: tombol voucher cepat dipindah ke LUAR flex row input+button */}
                   <div className="flex gap-3">
                     <input
                       type="text"
                       placeholder="Masukkan voucher"
                       value={voucher}
                       onChange={(e) => setVoucher(e.target.value)}
-                      className="flex-1 rounded-2xl bg-white border border-pink-100 px-5 py-4 focus:outline-none focus:ring-4 focus:ring-pink-100"
+                      className="flex-1 rounded-2xl bg-white dark:bg-charcoal-900 dark:text-cream-50 border border-pink-100 dark:border-white/10 px-5 py-4 focus:outline-none focus:ring-4 focus:ring-pink-100 dark:focus:ring-white/10"
                     />
                     <button
                       onClick={applyVoucher}
@@ -391,7 +385,6 @@ function Checkout() {
                     </button>
                   </div>
 
-                  {/* Tombol voucher cepat — di luar flex row agar tidak overflow */}
                   <div className="flex flex-wrap gap-3 mt-4">
                     <button
                       type="button"
@@ -399,7 +392,7 @@ function Checkout() {
                         setVoucher("WELCOME10");
                         setTimeout(applyVoucher, 50);
                       }}
-                      className="px-4 py-2 rounded-full bg-pink-100 text-pink-600 font-semibold hover:bg-pink-500 hover:text-white transition"
+                      className="px-4 py-2 rounded-full bg-pink-100 dark:bg-white/10 text-pink-600 dark:text-rose-300 font-semibold hover:bg-pink-500 hover:text-white transition"
                     >
                       WELCOME10
                     </button>
@@ -410,47 +403,47 @@ function Checkout() {
                         setVoucher("HEMAT20");
                         setTimeout(applyVoucher, 50);
                       }}
-                      className="px-4 py-2 rounded-full bg-purple-100 text-purple-600 font-semibold hover:bg-purple-500 hover:text-white transition"
+                      className="px-4 py-2 rounded-full bg-purple-100 dark:bg-white/10 text-purple-600 dark:text-purple-300 font-semibold hover:bg-purple-500 hover:text-white transition"
                     >
                       HEMAT20
                     </button>
                   </div>
 
                   {voucherMessage && (
-                    <p className="mt-3 text-sm font-medium">{voucherMessage}</p>
+                    <p className="mt-3 text-sm font-medium text-gray-900 dark:text-cream-50">{voucherMessage}</p>
                   )}
                 </div>
               </div>
 
-              <hr className="my-8" />
+              <hr className="my-8 border-gray-200 dark:border-white/10" />
 
               <div className="space-y-5">
                 <div className="flex justify-between text-lg">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-semibold">
+                  <span className="text-gray-600 dark:text-cream-100/60">Subtotal</span>
+                  <span className="font-semibold text-gray-900 dark:text-cream-50">
                     Rp {Number(totalPrice).toLocaleString("id-ID")}
                   </span>
                 </div>
 
-                <div className="flex justify-between text-lg text-green-600">
+                <div className="flex justify-between text-lg text-green-600 dark:text-green-400">
                   <span>Diskon</span>
                   <span>- Rp {Number(discount).toLocaleString("id-ID")}</span>
                 </div>
 
-                <div className="border-t pt-5 flex justify-between items-center">
+                <div className="border-t border-gray-200 dark:border-white/10 pt-5 flex justify-between items-center">
                   <div>
-                    <p className="text-gray-500">Total Pembayaran</p>
+                    <p className="text-gray-500 dark:text-cream-100/50">Total Pembayaran</p>
                     <h2 className="text-5xl font-black bg-gradient-to-r from-pink-500 via-fuchsia-500 to-purple-600 bg-clip-text text-transparent">
                       Rp {Number(finalTotal).toLocaleString("id-ID")}
                     </h2>
                   </div>
-                  <div className="bg-green-100 text-green-700 font-semibold px-4 py-2 rounded-full text-sm">
+                  <div className="bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 font-semibold px-4 py-2 rounded-full text-sm">
                     Pembayaran Aman
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 rounded-3xl bg-pink-50 border border-pink-100 p-5 space-y-2 text-sm text-gray-600">
+              <div className="mt-8 rounded-3xl bg-pink-50 dark:bg-white/5 border border-pink-100 dark:border-white/10 p-5 space-y-2 text-sm text-gray-600 dark:text-cream-100/60">
                 <div>🚚 Estimasi Pengiriman 1-2 Hari</div>
                 <div>🛡️ Data pelanggan terenkripsi</div>
                 <div>🍡 Produk dibuat fresh setiap hari</div>
@@ -473,14 +466,14 @@ function Checkout() {
               <div className="mt-8 space-y-5">
 
                 {/* Security */}
-                <div className="rounded-3xl border border-pink-100 bg-gradient-to-r from-pink-50 via-white to-fuchsia-50 p-6">
+                <div className="rounded-3xl border border-pink-100 dark:border-white/10 bg-gradient-to-r from-pink-50 via-white to-fuchsia-50 dark:from-white/5 dark:via-charcoal-900 dark:to-white/5 p-6">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center text-white text-xl">
                       🔒
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg">Pembayaran Aman</h3>
-                      <p className="text-gray-500 text-sm mt-1">
+                      <h3 className="font-bold text-lg text-gray-900 dark:text-cream-50">Pembayaran Aman</h3>
+                      <p className="text-gray-500 dark:text-cream-100/50 text-sm mt-1">
                         Seluruh data transaksi dienkripsi menggunakan SSL 256-bit.
                       </p>
                     </div>
@@ -497,18 +490,18 @@ function Checkout() {
                   ].map((item) => (
                     <div
                       key={item.title}
-                      className="rounded-3xl bg-pink-50 border border-pink-100 p-5 text-center"
+                      className="rounded-3xl bg-pink-50 dark:bg-white/5 border border-pink-100 dark:border-white/10 p-5 text-center"
                     >
                       <div className="text-3xl mb-2">{item.icon}</div>
-                      <h4 className="font-bold">{item.title}</h4>
-                      <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
+                      <h4 className="font-bold text-gray-900 dark:text-cream-50">{item.title}</h4>
+                      <p className="text-xs text-gray-500 dark:text-cream-100/50 mt-1">{item.desc}</p>
                     </div>
                   ))}
                 </div>
 
                 {/* Customer Trust */}
-                <div className="rounded-3xl border border-pink-100 bg-white p-6">
-                  <h3 className="font-bold text-lg mb-5">Dipercaya Pelanggan ❤️</h3>
+                <div className="rounded-3xl border border-pink-100 dark:border-white/10 bg-white dark:bg-charcoal-900 p-6">
+                  <h3 className="font-bold text-lg mb-5 text-gray-900 dark:text-cream-50">Dipercaya Pelanggan ❤️</h3>
                   <div className="grid grid-cols-3 gap-5 text-center">
                     {[
                       { value: "500+", label: "Order" },
@@ -517,7 +510,7 @@ function Checkout() {
                     ].map((stat) => (
                       <div key={stat.label}>
                         <h2 className="text-3xl font-black text-pink-500">{stat.value}</h2>
-                        <p className="text-sm text-gray-500">{stat.label}</p>
+                        <p className="text-sm text-gray-500 dark:text-cream-100/50">{stat.label}</p>
                       </div>
                     ))}
                   </div>

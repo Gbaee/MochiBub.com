@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* ===== COLOR TOKENS ===== */
@@ -67,5 +68,16 @@ h1, h2, h3, .font-display {
   background: rgba(22, 17, 15, 0.55);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dark body {
+  background-color: var(--color-charcoal-900);
+  color: var(--color-cream-100);
+}
+
+/* Membuat utility "glass" otomatis beradaptasi saat dark mode aktif */
+.dark .glass {
+  background: rgba(36, 28, 25, 0.55);
   border: 1px solid rgba(255, 255, 255, 0.08);
 }

@@ -15,7 +15,7 @@ function Hero() {
   const mochiY = useTransform(scrollY, [0, 500], [0, -80]);
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-cream-50 via-rose-50 to-rose-100">
+    <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-cream-50 via-rose-50 to-rose-100 dark:from-charcoal-900 dark:via-charcoal-800 dark:to-charcoal-900">
       {/* AURORA BLOBS - bergerak pelan, ciri khas luxury design */}
       <motion.div
         animate={{ x: [0, 30, 0], y: [0, 20, 0] }}
@@ -57,13 +57,13 @@ function Hero() {
             Mochi Premium Tangerang
           </span>
 
-          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-charcoal-900 leading-[1.1] mb-6 tracking-tight">
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-charcoal-900 dark:text-cream-50 leading-[1.1] mb-6 tracking-tight">
             Lembut di luar,
             <br />
             <span className="text-rose-500">lumer di dalam.</span>
           </h1>
 
-          <p className="text-charcoal-700/70 max-w-sm leading-relaxed mb-10 text-sm md:text-base">
+          <p className="text-charcoal-700/70 dark:text-cream-100/60 max-w-sm leading-relaxed mb-10 text-sm md:text-base">
             Nikmati mochi premium dengan berbagai varian rasa favorit keluarga
             Indonesia. Dibuat fresh setiap hari menggunakan bahan berkualitas.
           </p>
@@ -86,12 +86,10 @@ function Hero() {
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-xl md:text-2xl font-bold text-charcoal-900 leading-none">
+                    <h3 className="text-xl md:text-2xl font-bold text-charcoal-900 dark:text-cream-50 leading-none">
                       {stat.value}
                     </h3>
-                    <p className="text-xs text-charcoal-700/50 mt-1">
-                      {stat.label}
-                    </p>
+                    <p className="text-xs text-charcoal-700/50 dark:text-cream-100/40 mt-1">{stat.label}</p>
                   </div>
                 </div>
               );

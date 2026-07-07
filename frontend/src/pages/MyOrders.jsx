@@ -12,14 +12,13 @@ import {
 } from "react-icons/fa";
 
 import OrderDetailModal from "../components/OrderDetailModal";
-import { Link } from "react-router-dom";
+import { SectionTitle, Button } from "../components/ui";
+import { getStatusColor, getProgress } from "../utils/orderStatus";
+
 function MyOrders() {
   const [orders, setOrders] = useState([]);
-
   const [selectedOrder, setSelectedOrder] = useState(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,10 +28,7 @@ function MyOrders() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-
       const token = localStorage.getItem("token");
-
-      console.log("TOKEN =", token);
 
       const response = await axios.get(
         "http://localhost:5000/api/orders/my-orders",
@@ -43,19 +39,13 @@ function MyOrders() {
         },
       );
 
-      console.log(response.data);
-
-      console.log("ORDERS =", response.data);
-
       setOrders(response.data);
     } catch (error) {
       console.error(error);
-
-      console.log("STATUS:", error.response?.status);
-
-      console.log("DATA:", error.response?.data);
-
-      toast.error(error.response?.data?.message || "Gagal mengambil data pesanan. Cek koneksi ke server.");
+      toast.error(
+        error.response?.data?.message ||
+          "Gagal mengambil data pesanan. Cek koneksi ke server.",
+      );
     } finally {
       setLoading(false);
     }
@@ -75,350 +65,203 @@ function MyOrders() {
       );
 
       setSelectedOrder(response.data);
-
       setIsModalOpen(true);
     } catch (error) {
       console.error(error);
-
       toast.error("Gagal mengambil detail pesanan");
     }
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-
     setSelectedOrder(null);
-  };
-
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-700";
-
-      case "confirmed":
-      case "diproses":
-        return "bg-blue-100 text-blue-700";
-
-      case "processing":
-      case "dikirim":
-        return "bg-purple-100 text-purple-700";
-
-      case "completed":
-      case "selesai":
-        return "bg-green-100 text-green-700";
-
-      default:
-        return "bg-gray-100 text-gray-700";
-    }
-  };
-
-  const getProgress = (status) => {
-    switch (status?.toLowerCase()) {
-      case "pending":
-        return 25;
-
-      case "confirmed":
-      case "diproses":
-        return 50;
-
-      case "processing":
-      case "dikirim":
-        return 75;
-
-      case "completed":
-      case "selesai":
-        return 100;
-
-      default:
-        return 0;
-    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
+      <div className="min-h-screen flex justify-center items-center bg-cream-50 dark:bg-charcoal-900">
         <div className="text-center">
-          <div
-            className="
-              w-16
-              h-16
-              border-4
-              border-pink-200
-              border-t-pink-500
-              rounded-full
-              animate-spin
-              mx-auto
-            "
-          />
-
-          <p className="mt-5 text-gray-500">Memuat pesanan...</p>
+          <div className="w-16 h-16 border-4 border-rose-200 border-t-rose-500 rounded-full animate-spin mx-auto" />
+          <p className="mt-5 text-charcoal-700/60">Memuat pesanan...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gradient-to-b from-pink-50 to-white min-h-screen py-12">
-      <div className="max-w-6xl mx-auto px-5">
-        {/* HEADER */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-extrabold text-gray-800">
-            📦 Pesanan Saya
-          </h1>
+    <div className="relative bg-cream-50 dark:bg-charcoal-900 min-h-screen py-16 md:py-24 overflow-hidden">
+      <div
+        className="absolute top-0 right-0 w-[450px] h-[450px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(233,30,140,0.08) 0%, transparent 70%)",
+        }}
+      />
 
-          <p className="text-gray-500 mt-3 text-lg">
-            Pantau seluruh riwayat pesanan Mochi Bub dengan mudah.
-          </p>
-        </div>
+      <div className="max-w-5xl mx-auto px-5 md:px-8 relative z-10">
+        <SectionTitle
+          eyebrow="Riwayat Transaksi"
+          title="Pesanan Saya"
+          subtitle="Pantau seluruh riwayat pesanan Mochi Bub dengan mudah."
+        />
 
-        {/* STATISTIK */}
+        {/* STATISTIK - pill ramping, tidak makan tempat vertikal */}
         {orders.length > 0 && (
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <div className="bg-white rounded-3xl shadow-lg p-6">
-              <p className="text-gray-500">Total Pesanan</p>
-
-              <h2 className="text-4xl font-bold text-pink-500 mt-2">
-                {orders.length}
-              </h2>
+          <div className="flex flex-wrap gap-4 mb-12">
+            <div className="flex items-center gap-3 bg-white dark:bg-charcoal-800 rounded-2xl pl-3 pr-5 py-3 shadow-[var(--shadow-soft)]">
+              <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 shrink-0">
+                <FaClipboardList className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] text-charcoal-700/50 leading-tight">
+                  Total Pesanan
+                </p>
+                <p className="font-display font-bold text-charcoal-900 leading-tight">
+                  {orders.length}
+                </p>
+              </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-lg p-6">
-              <p className="text-gray-500">Pesanan Selesai</p>
-
-              <h2 className="text-4xl font-bold text-green-500 mt-2">
-                {
-                  orders.filter(
-                    (order) =>
-                      order.status?.toLowerCase() === "completed" ||
-                      order.status?.toLowerCase() === "selesai",
-                  ).length
-                }
-              </h2>
+            <div className="flex items-center gap-3 bg-white dark:bg-charcoal-800 rounded-2xl pl-3 pr-5 py-3 shadow-[var(--shadow-soft)]">
+              <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+                <FaCheckCircle className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] text-charcoal-700/50 leading-tight">
+                  Selesai
+                </p>
+                <p className="font-display font-bold text-charcoal-900 leading-tight">
+                  {
+                    orders.filter(
+                      (order) =>
+                        order.status?.toLowerCase() === "completed" ||
+                        order.status?.toLowerCase() === "selesai",
+                    ).length
+                  }
+                </p>
+              </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-lg p-6">
-              <p className="text-gray-500">Total Belanja</p>
-
-              <h2 className="text-3xl font-bold text-purple-500 mt-2">
-                Rp{" "}
-                {orders
-                  .reduce(
-                    (total, order) => total + Number(order.total_price),
-                    0,
-                  )
-                  .toLocaleString("id-ID")}
-              </h2>
+            <div className="flex items-center gap-3 bg-white dark:bg-charcoal-800 rounded-2xl pl-3 pr-5 py-3 shadow-[var(--shadow-soft)]">
+              <div className="w-10 h-10 rounded-xl bg-gold-50 flex items-center justify-center text-gold-600 shrink-0">
+                <FaMoneyBillWave className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] text-charcoal-700/50 leading-tight">
+                  Total Belanja
+                </p>
+                <p className="font-display font-bold text-charcoal-900 leading-tight">
+                  Rp{" "}
+                  {orders
+                    .reduce(
+                      (total, order) => total + Number(order.total_price),
+                      0,
+                    )
+                    .toLocaleString("id-ID")}
+                </p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* LIST PESANAN */}
+        {/* LIST PESANAN - kartu horizontal ala tiket, ramping */}
         {orders.length > 0 ? (
-          <div className="space-y-8">
-            {orders.map((order) => (
+          <div className="space-y-5">
+            {orders.map((order, index) => (
               <motion.div
                 key={order.id}
-                initial={{
-                  opacity: 0,
-                  y: 30,
-                }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                }}
-                transition={{
-                  duration: 0.4,
-                }}
-                className="
-          bg-white
-          rounded-[30px]
-          shadow-lg
-          hover:shadow-2xl
-          transition-all
-          duration-300
-          hover:-translate-y-1
-          overflow-hidden
-        "
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.06 }}
+                className="bg-white dark:bg-charcoal-800 rounded-3xl shadow-[var(--shadow-soft)] hover:shadow-lg transition-shadow duration-300 overflow-hidden"
               >
-                {/* Header Card */}
-                <div className="bg-gradient-to-r from-pink-500 to-rose-500 text-white p-6">
-                  <div className="flex flex-wrap justify-between items-center gap-4">
+                <div className="flex flex-col md:flex-row">
+                  {/* Kiri: identitas order */}
+                  <div className="md:w-48 shrink-0 bg-gradient-to-br from-rose-600 to-rose-400 text-white p-5 flex flex-row md:flex-col justify-between md:justify-center gap-2">
                     <div>
-                      <p className="text-sm opacity-90">Order ID</p>
-
-                      <h2 className="text-3xl font-bold">#{order.id}</h2>
-                    </div>
-
-                    <span
-                      className={`
-                px-5
-                py-2
-                rounded-full
-                font-semibold
-                bg-white
-                ${getStatusColor(order.status)}
-              `}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Body */}
-                <div className="p-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <p className="text-gray-500">Tanggal Pemesanan</p>
-
-                      <h3 className="font-semibold text-lg mt-1">
-                        {new Date(order.created_at).toLocaleDateString(
-                          "id-ID",
-                          {
-                            day: "numeric",
-                            month: "long",
-                            year: "numeric",
-                          },
-                        )}
+                      <p className="text-[10px] uppercase tracking-widest opacity-70">
+                        Order
+                      </p>
+                      <h3 className="font-display text-2xl font-bold">
+                        #{order.id}
                       </h3>
                     </div>
+                    <p className="text-xs opacity-80">
+                      {new Date(order.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  </div>
 
-                    <div>
-                      <p className="text-gray-500">Total Pembayaran</p>
-
-                      <h3 className="text-3xl font-bold text-pink-500 mt-1">
+                  {/* Tengah: status, harga, progress */}
+                  <div className="flex-1 p-5 flex flex-col justify-center gap-3 border-b md:border-b-0 md:border-r border-beige-100">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.status)}`}
+                      >
+                        {order.status}
+                      </span>
+                      <p className="font-display text-lg font-bold text-rose-500">
                         Rp {Number(order.total_price).toLocaleString("id-ID")}
-                      </h3>
-                    </div>
-                  </div>
-
-                  {/* Progress */}
-                  <div className="mt-8">
-                    <div className="flex justify-between text-sm text-gray-500 mb-2">
-                      <span>Pesanan Dibuat</span>
-
-                      <span>{order.status}</span>
+                      </p>
                     </div>
 
-                    <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <div className="w-full bg-beige-200 rounded-full h-2 overflow-hidden">
                       <motion.div
-                        initial={{
-                          width: 0,
-                        }}
-                        animate={{
-                          width: `${getProgress(order.status)}%`,
-                        }}
-                        transition={{
-                          duration: 1,
-                        }}
-                        className="
-                  bg-gradient-to-r
-                  from-pink-500
-                  to-rose-500
-                  h-3
-                  rounded-full
-                "
+                        initial={{ width: 0 }}
+                        animate={{ width: `${getProgress(order.status)}%` }}
+                        transition={{ duration: 0.8 }}
+                        className="h-2 rounded-full bg-gradient-to-r from-rose-500 to-gold-400"
                       />
                     </div>
                   </div>
 
-                  {/* Footer */}
-                  <div className="mt-8 border-t pt-5">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                      <p className="text-gray-500 text-sm">
-                        ❤️ Terima kasih telah mempercayai Mochi Bub. Kami akan
-                        selalu memberikan pelayanan terbaik untuk setiap pesanan
-                        Anda.
-                      </p>
+                  {/* Kanan: aksi */}
+                  <div className="p-5 flex flex-row md:flex-col gap-2 justify-center items-stretch">
+                    <Button
+                      onClick={() => handleOpenDetail(order.id)}
+                      variant="primary"
+                      size="sm"
+                    >
+                      <FaEye className="w-3.5 h-3.5" /> Detail
+                    </Button>
 
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => handleOpenDetail(order.id)}
-                          className="
-        flex
-        items-center
-        gap-2
-        bg-pink-500
-        hover:bg-pink-600
-        text-white
-        px-6
-        py-3
-        rounded-2xl
-        font-semibold
-        transition
-        "
+                    {order.payment_method === "Transfer" &&
+                      !order.payment_proof && (
+                        <Button
+                          to={`/upload-payment/${order.id}`}
+                          variant="gold"
+                          size="sm"
                         >
-                          <FaEye />
-                          Lihat Detail
-                        </button>
-
-                        {order.payment_method === "Transfer" &&
-                          !order.payment_proof && (
-                            <Link
-                              to={`/upload-payment/${order.id}`}
-                              className="
-            flex
-            items-center
-            gap-2
-            bg-green-500
-            hover:bg-green-600
-            text-white
-            px-6
-            py-3
-            rounded-2xl
-            font-semibold
-            transition
-            "
-                            >
-                              Upload Bukti
-                            </Link>
-                          )}
-                      </div>
-                    </div>
+                          Upload Bukti
+                        </Button>
+                      )}
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
         ) : (
-          <div
-            className="
-              bg-white
-              rounded-[30px]
-              shadow-xl
-              p-16
-              text-center
-            "
-          >
-            <div className="text-8xl mb-6">📭</div>
-
-            <h2 className="text-3xl font-bold text-gray-800">
+          <div className="bg-white rounded-3xl shadow-[var(--shadow-soft)] p-16 text-center">
+            <div className="w-20 h-20 rounded-full bg-rose-50 flex items-center justify-center mx-auto mb-6 text-rose-400">
+              <FaBoxOpen className="w-9 h-9" />
+            </div>
+            <h2 className="font-display text-3xl font-bold text-charcoal-900 dark:text-cream-50">
               Belum Ada Pesanan
             </h2>
-
-            <p className="text-gray-500 mt-4">
+            <p className="text-charcoal-700/60 mt-4">
               Yuk pesan mochi favoritmu sekarang dan nikmati kelezatannya.
             </p>
-
-            <a
-              href="/products"
-              className="
-                inline-block
-                mt-8
-                bg-pink-500
-                hover:bg-pink-600
-                text-white
-                px-8
-                py-4
-                rounded-full
-                font-semibold
-                transition
-                hover:scale-105
-              "
-            >
-              🍡 Lihat Produk
-            </a>
+            <div className="mt-8 flex justify-center">
+              <Button to="/products" variant="primary" size="lg">
+                Lihat Produk
+              </Button>
+            </div>
           </div>
         )}
+
         <OrderDetailModal
           isOpen={isModalOpen}
           onClose={handleCloseModal}
@@ -428,4 +271,5 @@ function MyOrders() {
     </div>
   );
 }
+
 export default MyOrders;

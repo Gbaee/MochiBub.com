@@ -36,7 +36,7 @@ function ChefRecommendation() {
   if (status !== "success" || !product) return null;
 
   return (
-    <section className="py-24 md:py-32 bg-rose-50/40">
+    <section className="py-24 md:py-32 bg-rose-50/40 dark:bg-charcoal-800">
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 grid md:grid-cols-2 gap-14 items-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -60,7 +60,7 @@ function ChefRecommendation() {
             title="Today's Recommendation"
           />
 
-          <h3 className="font-display text-3xl font-bold text-charcoal-900 -mt-8 mb-3">
+          <h3 className="font-display text-3xl font-bold text-charcoal-900 dark:text-cream-50 -mt-8 mb-3">
             {product.nama_produk}
           </h3>
 
@@ -78,7 +78,7 @@ function ChefRecommendation() {
             </div>
           )}
 
-          <p className="text-charcoal-700/70 leading-relaxed mb-6 max-w-md">
+          <p className="text-charcoal-700/70 dark:text-cream-100/60 leading-relaxed mb-6 max-w-md">
             {product.deskripsi}
           </p>
 

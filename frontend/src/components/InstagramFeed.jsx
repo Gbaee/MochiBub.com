@@ -14,7 +14,7 @@ const INSTAGRAM_URL = "https://www.instagram.com/cankitchen_?igsh=MWRuYWoxNG9nOG
 
 function InstagramFeed() {
   return (
-    <section className="py-24 md:py-32 bg-rose-50/40">
+    <section className="py-24 md:py-32 bg-rose-50/40 dark:bg-charcoal-800">
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         <SectionTitle
           eyebrow="Follow Us"

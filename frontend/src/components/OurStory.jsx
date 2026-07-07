@@ -1,5 +1,10 @@
 import { motion } from "framer-motion";
-import { FaBreadSlice, FaGem, FaHandHoldingHeart, FaTruck } from "react-icons/fa";
+import {
+  FaBreadSlice,
+  FaGem,
+  FaHandHoldingHeart,
+  FaTruck,
+} from "react-icons/fa";
 import storyImage from "../assets/mochi-warna.jpg";
 import { SectionTitle } from "./ui";
 
@@ -12,11 +17,14 @@ const PROCESS_STEPS = [
 
 function OurStory() {
   return (
-    <section className="relative py-24 md:py-32 bg-cream-50 overflow-hidden">
+    <section className="relative py-24 md:py-32 bg-cream-50 dark:bg-charcoal-900 overflow-hidden">
       {/* Aurora blob halus di background, konsisten dengan Hero */}
       <div
         className="absolute top-1/4 -left-32 w-[400px] h-[400px] rounded-full pointer-events-none"
-        style={{ background: "radial-gradient(circle, rgba(201,161,95,0.1) 0%, transparent 70%)" }}
+        style={{
+          background:
+            "radial-gradient(circle, rgba(201,161,95,0.1) 0%, transparent 70%)",
+        }}
       />
 
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16 grid md:grid-cols-2 gap-14 items-center relative z-10">
@@ -48,13 +56,17 @@ function OurStory() {
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.6 }}
-                  transition={{ duration: 0.5, delay: i * 0.15, ease: "easeOut" }}
+                  transition={{
+                    duration: 0.5,
+                    delay: i * 0.15,
+                    ease: "easeOut",
+                  }}
                   className="relative z-10 flex flex-col items-center gap-2 w-16"
                 >
                   <div className="w-12 h-12 rounded-full bg-cream-50 border-2 border-gold-400 flex items-center justify-center text-gold-600 shadow-[var(--shadow-soft)]">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <span className="text-[11px] text-center text-charcoal-700/70 font-medium leading-tight">
+                  <span className="text-[11px] text-center text-charcoal-700/70 dark:text-cream-100/50 font-medium leading-tight">
                     {step.label}
                   </span>
                 </motion.div>
@@ -78,8 +90,12 @@ function OurStory() {
             className="relative rounded-3xl w-full h-[420px] object-cover shadow-[var(--shadow-soft)]"
           />
           <div className="absolute -bottom-6 -left-6 glass rounded-2xl px-6 py-4 shadow-[var(--shadow-glow-gold)]">
-            <p className="font-display text-2xl font-bold text-charcoal-900">100%</p>
-            <p className="text-xs text-charcoal-700/60">Handmade Fresh</p>
+            <p className="font-display text-2xl font-bold text-charcoal-900 dark:text-cream-50">
+              100%
+            </p>
+            <p className="text-xs text-charcoal-700/60 dark:text-cream-100/50">
+              Handmade Fresh
+            </p>
           </div>
         </motion.div>
       </div>

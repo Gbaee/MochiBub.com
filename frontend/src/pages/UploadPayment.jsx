@@ -5,9 +5,7 @@ import toast from "react-hot-toast";
 
 function UploadPayment() {
   const { id } = useParams();
-
   const navigate = useNavigate();
-
   const [file, setFile] = useState(null);
 
   const handleUpload = async () => {
@@ -18,9 +16,7 @@ function UploadPayment() {
 
     try {
       const token = localStorage.getItem("token");
-
       const formData = new FormData();
-
       formData.append("payment", file);
 
       await axios.post(
@@ -35,66 +31,47 @@ function UploadPayment() {
       );
 
       toast.success("Bukti pembayaran berhasil dikirim 💳");
-
       navigate("/my-orders");
     } catch (error) {
       console.error(error);
-
       toast.error(error.response?.data?.message || "Gagal upload bukti pembayaran");
     }
   };
 
   return (
     <div className="max-w-5xl mx-auto px-5 py-10">
-      <div className="bg-white rounded-3xl shadow-xl p-8">
-        <h1 className="text-4xl font-bold mb-3">💳 Pembayaran QRIS</h1>
+      <div className="bg-white dark:bg-charcoal-800 rounded-3xl shadow-xl p-8">
+        <h1 className="text-4xl font-bold mb-3 text-gray-900 dark:text-cream-50">
+          💳 Pembayaran QRIS
+        </h1>
 
-        <p className="text-gray-500 mb-8">
+        <p className="text-gray-500 dark:text-cream-100/50 mb-8">
           Scan QRIS berikut menggunakan GoPay, DANA, OVO, ShopeePay, Mobile
           Banking atau aplikasi lainnya.
         </p>
 
-        {/* GANTI DENGAN QRIS ASLI */}
         <img
           src="/Qris-mochi.jpeg"
           alt="QRIS Mochi Bub"
-          className="
-          w-full
-          max-w-md
-          mx-auto
-          rounded-2xl
-          border
-          "
+          className="w-full max-w-md mx-auto rounded-2xl border border-gray-200 dark:border-white/10"
         />
 
         <div className="mt-10">
-          <h2 className="text-xl font-bold mb-3">Upload Bukti Pembayaran</h2>
+          <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-cream-50">
+            Upload Bukti Pembayaran
+          </h2>
 
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setFile(e.target.files[0])}
-            className="
-            w-full
-            border
-            p-4
-            rounded-xl
-            "
+            className="w-full border border-gray-300 dark:border-white/10 dark:bg-charcoal-900 dark:text-cream-50 p-4 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-pink-100 dark:file:bg-white/10 file:text-pink-600 dark:file:text-rose-300 file:font-semibold"
           />
         </div>
 
         <button
           onClick={handleUpload}
-          className="
-          w-full
-          mt-8
-          bg-pink-500
-          hover:bg-pink-600
-          text-white
-          py-4
-          rounded-2xl
-          font-bold
-          "
+          className="w-full mt-8 bg-pink-500 hover:bg-pink-600 text-white py-4 rounded-2xl font-bold"
         >
           Kirim Bukti Pembayaran
         </button>

@@ -15,6 +15,7 @@ import logo from "../assets/mochi-logo.jpeg";
 import ProductSearch from "../components/ProductSearch";
 import { Button } from "../components/ui";
 import { NAV_LINKS } from "../constants/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 function Navbar() {
   const { cart } = useCart();
@@ -53,7 +54,7 @@ function Navbar() {
     <>
       <nav
         className={`sticky top-0 z-50 transition-all duration-500 ${
-          isScrolled ? "glass shadow-[var(--shadow-soft)]" : "bg-cream-50/90"
+          isScrolled ? "glass shadow-[var(--shadow-soft)]" : "bg-cream-50/90 dark:bg-charcoal-900/90"
         }`}
       >
         <div className="max-w-7xl mx-auto px-5 md:px-8 py-3 md:py-4 flex items-center justify-between gap-4">
@@ -65,7 +66,7 @@ function Navbar() {
               className="w-11 h-11 md:w-12 md:h-12 rounded-full object-cover border-2 border-gold-400 shadow-[var(--shadow-soft)]"
             />
             <div className="hidden sm:block">
-              <h1 className="font-display text-xl md:text-2xl font-bold text-charcoal-900 leading-tight">
+              <h1 className="font-display text-xl md:text-2xl font-bold text-charcoal-900 dark:text-cream-50 leading-tight">
                 Mochi Bubb
               </h1>
               <p className="text-[10px] md:text-xs tracking-[0.15em] uppercase text-gold-600">
@@ -90,6 +91,8 @@ function Navbar() {
                 {link.label}
               </Link>
             ))}
+
+            <ThemeToggle />
 
             <Link to="/cart" className="relative text-charcoal-700 hover:text-rose-500 transition-colors">
               <HiOutlineShoppingBag className="w-6 h-6" />
@@ -185,9 +188,12 @@ function Navbar() {
             >
               <div className="flex items-center justify-between">
                 <span className="font-display text-xl font-bold text-charcoal-900">Menu</span>
-                <button onClick={() => setIsMobileOpen(false)} aria-label="Tutup menu">
-                  <HiOutlineX className="w-7 h-7 text-charcoal-900" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <ThemeToggle />
+                  <button onClick={() => setIsMobileOpen(false)} aria-label="Tutup menu">
+                    <HiOutlineX className="w-7 h-7 text-charcoal-900" />
+                  </button>
+                </div>
               </div>
 
               <ProductSearch />

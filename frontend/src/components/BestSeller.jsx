@@ -42,7 +42,10 @@ function BestSeller() {
   };
 
   return (
-    <section id="best-seller" className="py-24 md:py-32 bg-cream-50">
+    <section
+      id="best-seller"
+      className="py-24 md:py-32 bg-cream-50 dark:bg-charcoal-900"
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         <SectionTitle
           eyebrow="Best Seller"
@@ -84,7 +87,7 @@ function BestSeller() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: index * 0.15 }}
                 whileHover={{ y: -10 }}
-                className="group relative rounded-3xl overflow-hidden bg-white shadow-[var(--shadow-soft)]"
+                className="group relative rounded-3xl overflow-hidden bg-white dark:bg-charcoal-800 shadow-[var(--shadow-soft)]"
               >
                 {/* BADGE */}
                 <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 glass px-3 py-1.5 rounded-full text-[11px] font-semibold text-gold-600">
@@ -100,7 +103,7 @@ function BestSeller() {
                 </div>
 
                 <div className="p-8 text-center">
-                  <h3 className="font-display text-2xl font-bold text-charcoal-900">
+                  <h3 className="font-display text-2xl font-bold text-charcoal-900 dark:text-cream-50">
                     {item.nama_produk}
                   </h3>
 
@@ -124,7 +127,7 @@ function BestSeller() {
                     </div>
                   )}
 
-                  <p className="mt-3 text-sm text-charcoal-700/60">
+                  <p className="mt-3 text-sm text-charcoal-700/60 dark:text-cream-100/50">
                     Produk terlaris berdasarkan pembelian pelanggan
                   </p>
 

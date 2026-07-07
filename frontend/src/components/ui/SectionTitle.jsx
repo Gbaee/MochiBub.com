@@ -16,11 +16,11 @@ function SectionTitle({ eyebrow, title, subtitle, align = "center", dark = false
           {eyebrow}
         </span>
       )}
-      <h2 className={`font-display text-3xl md:text-5xl font-bold leading-tight ${dark ? "text-cream-50" : "text-charcoal-900"}`}>
+      <h2 className={`font-display text-3xl md:text-5xl font-bold leading-tight ${dark ? "text-cream-50" : "text-charcoal-900 dark:text-cream-50"}`}>
         {title}
       </h2>
       {subtitle && (
-        <p className={`mt-4 text-sm md:text-base leading-relaxed ${dark ? "text-cream-200/80" : "text-charcoal-700/70"}`}>
+        <p className={`mt-4 text-sm md:text-base leading-relaxed ${dark ? "text-cream-200/80" : "text-charcoal-700/70 dark:text-cream-100/60"}`}>
           {subtitle}
         </p>
       )}

@@ -21,7 +21,7 @@ const GALLERY_IMAGES = [
 
 function Gallery() {
   return (
-    <section className="py-24 md:py-32 bg-cream-50">
+    <section className="py-24 md:py-32 bg-cream-50 dark:bg-charcoal-900">
       <div className="max-w-7xl mx-auto px-6 md:px-10 lg:px-16">
         <SectionTitle
           eyebrow="Gallery"
